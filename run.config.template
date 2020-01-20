@@ -1,0 +1,112 @@
+########################################################################
+#
+# Part #1: RNA-seq sequencing project specific information
+#
+#######################################################################
+
+# !!!!!!
+# Directory for FASTQ files. This parameter MUST be changed
+# every time when you analyze a new project/dataset
+FASTQ_DIR=/lustre/workspace/projects/ECD/GTEx
+
+# !!!!!!
+# stranded or nonstranded. #0: nonstranded;  1: forward strandness;  2: reverse strandness
+# For Illumina true mRNA-seq, this parameter is usually set to 2
+STRAND=0
+
+# !!!!!!
+# If you don't have an annotation, please comment the next line
+# If you do, please make sure coulmn #1 and #2 correponding to
+# Sample_ID and Subject_ID, respectively. The file is tab demilited.
+SAMPLE_ANNOTATION=sample.annotation.txt
+
+# Suffix for fastq:  fq.gz or fastq.gz or fastq  or fq
+FASTQ_SUFFIX=fastq.gz
+
+# Select the algorithm for quantification:  RSEM, KALLISTO, SALMON_ALN, SALMON
+# You can set this papareter to ALL if you want to run all algorithms. 
+# SALMON_ALN is generally recommeded. KALLISTO and RSEM also work great.
+#
+ISOFORM_ALGORITHM=ALL
+#ISOFORM_ALGORITHM=SALMON_ALN
+#ISOFORM_ALGORITHM=RSEM
+#ISOFORM_ALGORITHM=KALLISTO
+#ISOFORM_ALGORITHM=SALMON
+
+# sequencing type: pair or single
+SEQUENCE_TYPE=pair
+
+# sequencing depth #regular: 40-80M; #deep: >80M, or encounter issues with STAR run due to BAM sorting
+SEQUENCE_DEPTH=regular
+
+#log directory
+LOGDIR=/hpc/grid/scratch/$USER/log
+mkdir -p $LOGDIR
+
+
+#######################################################################
+#
+# Part 2: Species-specific Index, FASTA, GTF and Annotation
+#
+#######################################################################
+
+#
+# Human: GRCh38
+#
+#
+# Species: human, mouse, rat and etc
+SAMPLE_SPECIES=human
+
+INDEX_ROOT=/lustre/workspace/projects/ECD/zhaos25/QuickIsoSeq_Pub/Indexes/GRCh38_Genecode30
+
+GENOME_FASTA=$INDEX_ROOT/genome.fa
+GTF_FILE=$INDEX_ROOT/gene.gtf
+TRANSCRIPT_FASTA=$INDEX_ROOT/transcript.fa
+TRANSCRIPT_ANNOTATION=$INDEX_ROOT/transcript.annot
+GENE_ANNOTATION=$INDEX_ROOT/gene.annot
+CHR_REGION=chr6:1-170805979
+
+STAR_INDEX=$INDEX_ROOT/STAR_100
+RSEM_INDEX=$INDEX_ROOT/rsem/rsem
+SALMON_INDEX=$INDEX_ROOT/salmon
+KALLISTO_INDEX=$INDEX_ROOT/kallisto/index
+
+rRNA_BWT_INDEX=$INDEX_ROOT/bowtie_rRNA/rRNA
+hgRNA_BWT_INDEX=$INDEX_ROOT/bowtie_hgRNA/hgRNA
+
+
+
+#######################################################################
+#
+# Part 3: Software locations and Software specific parameters
+#
+##Usually, you DON'T need to modify them unless you understand the
+##impacts of these parameters
+#
+#######################################################################
+
+STAR_PARAMETER="--alignSJDBoverhangMin 1 --outFilterMismatchNoverLmax 0.05 --outFilterScoreMinOverLread 0.90 --outFilterMatchNminOverLread 0.90 --alignIntronMax 1000000"
+FEATURECOUNTS_OVERLAP="--minOverlap 25"
+VARSCAN_PARAMETER="--min-coverage 20 --min-reads2 4"
+
+RSEM_PARAMETER="--seed 12345 --quiet --time  --no-bam-output --bam"
+SALMON_ALN_PARAMETER=" --incompatPrior 0 "
+SALMON_PARAMETER=" --incompatPrior 0  --validateMappings "
+KALLISTO_PARAMETER=" "
+
+
+APPLICATION_ROOT=/lustre/workspace/projects/ECD/zhaos25/QuickIsoSeq_Pub/Tools
+
+STAR=$APPLICATION_ROOT/STAR_2.7.3a/bin/Linux_x86_64_static
+FEATURECOUNTS=$APPLICATION_ROOT/subread-2.0.0/bin
+VARSCAN_JAR=$APPLICATION_ROOT/VarScan.v2.4.0.jar
+SAMTOOLS=$APPLICATION_ROOT/samtools-1.9/bin
+RSEM=$APPLICATION_ROOT/RSEM-1.3.1
+SALMON=$APPLICATION_ROOT/salmon-1.1.0/bin
+KALLISTO=$APPLICATION_ROOT/kallisto
+GFFREAD=$APPLICATION_ROOT/gffread-0.11.4.Linux_x86_64
+BOWTIE=$APPLICATION_ROOT/bowtie-1.2.3-linux-x86_64
+
+export PATH=$SAMTOOLS:$STAR:$FEATURECOUNTS:$RSEM:$SALMON:$KALLISTO:$GFFREAD:$BOWTIE:$PATH
+
+
