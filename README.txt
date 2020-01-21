@@ -3,6 +3,11 @@
 #   QuickIsoSeq pipeline for RNA-seq isoform quantification
 #
 ###########################################################
+	
+!!! Important !!!
+After you download QuickIsoSeq, please make sure all excutables can be run in a bash script by
+changeing their file permissions as follows.
+	chmod +x *.sh *.pl 
 
 !!! Warning !!!
 You can run QuickIoSeq off-shelf in a HPC cluster with a "LSF" job managment system. 
@@ -10,7 +15,7 @@ Otherwise, you need to twist the following scripts and change the command lines
 with "bsub". This should be trival. 
 	* run-isoseq.sh
 	* create_indexes.GRCh38_Genecode30.sh
-	
+
 !!! Impatient users !!!
 If you cannot wait, run the following commands one by one. Otherwise, skip to "Prerequsites".
 
