@@ -5,7 +5,7 @@
 ###########################################################
 	
 !!! Important !!!
-After you download QuickIsoSeq, please make sure all excutables can be run in a bash script by
+After you download QuickIsoSeq, please make sure all excutables can be run in a bash shell by
 changeing their file permissions as follows.
 	chmod +x *.sh *.pl 
 
