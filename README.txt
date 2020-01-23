@@ -3,11 +3,6 @@
 #   QuickIsoSeq pipeline for RNA-seq isoform quantification
 #
 ###########################################################
-	
-!!! Important !!!
-After you download QuickIsoSeq, please make sure all excutables can be run in a bash shell by
-changeing their file permissions as follows.
-	chmod +x *.sh *.pl 
 
 !!! Warning !!!
 You can run QuickIoSeq off-shelf in a HPC cluster with a "LSF" job managment system. 
