@@ -192,22 +192,17 @@ fi
 
 
 #
-# Part E: generate an integrated HTML report for all QC metrices and quantification results
-#
-echo ""
-echo "Part E: generate an integrated HTML report"
-
-# (TO BE IMPLEMENED ......)
-
-
-#
-# Move results to the output folder
+# Part E: Move results to the output folder
 #
 RESULT_FOLDER=Results
 if [[ $# -eq 3 ]]; then
     RESULT_FOLDER=$3
 fi
 SUMMARY_FOLDER=$RESULT_FOLDER/Summary
+
+echo ""
+echo "Part E: Move results to $SUMMARY_FOLDER"
+
 
 mkdir -p $RESULT_FOLDER
 mkdir -p $SUMMARY_FOLDER
