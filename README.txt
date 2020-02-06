@@ -72,7 +72,9 @@ The running time is ~1hr. The locations for all indexed files can be found in
 By default, INDEX_ROOT points to $QuickIsoSeq/Indexes/GRCh38_Genecode30	if
 you prepare those indexes using create_indexes.GRCh38_Genecode30.sh
 	
-	
+!!! Caution: make sure all your index files are succerssfuly created before 
+moving on to run QuickIsoSeq
+
 ###########################################################
 #
 ## Run QuickIsoSeq: 3 steps and 2 command lines
@@ -136,6 +138,7 @@ Step #2: Run pipeline to process individual samples: mapping, counting and QC
 	export PATH=$QuickIsoSeq:$PATH
 	run-isoseq.sh allIDs.txt run.config
 
+Move on to next step after all jobs are completed.
 
 !!!
 Step #3: Merge results from individual samples and generate an integrated QC and web report
@@ -151,6 +154,9 @@ unless you provide a different output folder name in your command line as the 3r
 For instance, "merge-isoseq.sh allIDs.txt run.config Outputs &> Results.log". If so, the
 output folder will be
 	Outputs/Summary 
+
+Please check Results.log, and see whether this step is successful. If everything is fine, 
+you should see a file “RNASeq-merged-metrics.txt” unser the Summary folder.
 
 	
 ###########################################################
