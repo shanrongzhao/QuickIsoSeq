@@ -145,7 +145,7 @@ Step #3: Merge results from individual samples and generate an integrated QC and
 ============================
 	export QuickIsoSeq=<Your QuickIsoSeq Install Folder>
 	export PATH=$QuickIsoSeq:$PATH
-	ml RHEL6-apps R/3.2.3
+	# ml RHEL6-apps R/3.2.3  #Make sure your R environment is available
 	merge-isoseq.sh allIDs.txt run.config &> Results.log
 
 Note: The default output folder is under
