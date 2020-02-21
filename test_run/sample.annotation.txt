@@ -1,4 +1,4 @@
-Run	subject_id	histological_type	sex
+sample_id	subject_id	histological_type	sex
 SRR607214	GTEX-N7MS	Blood	male
 SRR615261	GTEX-N7MS	Blood Vessel	male
 SRR603068	GTEX-N7MS	Brain	male
