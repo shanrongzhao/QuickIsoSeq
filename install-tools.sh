@@ -144,7 +144,7 @@ rm -f gffread-0.11.4.Linux_x86_64.tar.gz
 wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
 unzip fastqc_v0.11.9.zip
 rm  fastqc_v0.11.9.zip
-chmod +x FastQC/fastgc
+chmod +x FastQC/fastqc
 
 
 #
@@ -155,7 +155,7 @@ Please add the following exccutables and PATH to run.config file
 	"
 
 echo "
-APPLICATION_ROOT=$APPLICATION_ROOT
+APPLICATION_ROOT=\$QuickIsoSeq/Tools
 
 STAR=\$APPLICATION_ROOT/STAR_$STAR_VERSION/bin/Linux_x86_64_static
 FEATURECOUNTS=\$APPLICATION_ROOT/${SUBREAD_VERSION}/bin
