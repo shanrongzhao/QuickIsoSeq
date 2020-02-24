@@ -32,6 +32,7 @@ If you cannot wait, run the following commands one by one. Otherwise, skip to ""
 
 It is assumed you has already installed
 	* perl, java and R > 3.2
+	* python with MultiQC package installed
 
 For R, make sure these two libraries are installed as well.
 	* ggplot2
