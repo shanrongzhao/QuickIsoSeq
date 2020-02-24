@@ -18,6 +18,11 @@ if [[ $# -ne 2 ]]; then
 	exit
 fi
 
+if [ -z "$QuickIsoSeq" ]; then
+	echo "QuickIsoSeq environment variable has not been set"
+	exit
+fi
+
 FLIST=$1
 CONFIG=$2
 
@@ -35,6 +40,31 @@ else
 	echo "Please provide a configuration file"
 	exit
 fi
+
+
+##############################################################################
+#
+# FASTQC
+#
+##############################################################################
+
+for f in `cat $FLIST`
+do
+   mkdir -p $f
+   cd $f
+   
+   fastqs="$FASTQ_DIR/${f}_1.$FASTQ_SUFFIX $FASTQ_DIR/${f}_2.$FASTQ_SUFFIX"
+   if [[ $SEQUENCE_TYPE = "single" ]]; then
+		fastqs="$FASTQ_DIR/${f}.$FASTQ_SUFFIX"
+	fi
+	
+   mkdir -p fastqc
+   
+   bsub -J "$f.fastqc" -n 8 -R "rusage [mem=16384]" -M 16384 \
+		-o "$LOGDIR/$f.fastqc.log" -e "$LOGDIR/$f.fastqc.err" \
+        "fastqc -o fastqc -t 4 $fastqs"
+   cd ..
+done
 
 
 ##############################################################################
@@ -90,8 +120,8 @@ do
 	fi
 	bsub -app large -J "$f.map-star" -n $CORE -R "span[hosts=1] $MEMORY_USAGE" $M_PARAMETER -o "$LOGDIR/$f.star.log" -e "$LOGDIR/$f.star.err" \
         "STAR --genomeDir $STAR_INDEX --readFilesIn $FASTQS $READCMD --runThreadN $CORE $limitBAMsortRAM --alignEndsType EndToEnd $QUANT_MODE --outSAMtype BAM SortedByCoordinate $STAR_PARAMETER; 
-         mv Aligned.sortedByCoord.out.bam $f.sort.bam; $RENAME_TX_BAM 
-		 samtools index $f.sort.bam;
+         mv Aligned.sortedByCoord.out.bam $f.bam; $RENAME_TX_BAM 
+		 samtools index $f.bam;
          rm -rf _STARtmp"
    cd ..
 done
@@ -111,7 +141,7 @@ for f in `cat $FLIST`
 do
 	cd $f
 	bsub -app medium -n 6 -J "$f.featureCounts" -w "ended('$f.map-star')"  -o "$LOGDIR/$f.featureCounts.log" -e "$LOGDIR/$f.featureCounts.err" \
-       		"featureCounts $PAIRS -T 6 -F GTF -a $GTF_FILE -t exon -g gene_id -s $STRAND -C $FEATURECOUNTS_OVERLAP -o ${f}.featureCounts.txt $f.sort.bam"
+       		"featureCounts $PAIRS -T 6 -F GTF -a $GTF_FILE -t exon -g gene_id -s $STRAND -C $FEATURECOUNTS_OVERLAP -o ${f}.featureCounts.txt $f.bam"
 	cd ..
 done
 
@@ -125,7 +155,7 @@ for f in `cat $FLIST`
 do
     cd $f
      bsub -J "$f.snp-call" -w "ended('$f.map-star')"  -M 12000 -R "rusage[mem=12000]" -o "$LOGDIR/$f.snp-call.log" -e "$LOGDIR/$f.snp-call.err" \
-     "samtools mpileup -r $CHR_REGION -f $GENOME_FASTA $f.sort.bam | awk '\$4 != 0' | java -jar $VARSCAN_JAR pileup2snp - $VARSCAN_PARAMETER > $f.snp.txt"
+     "samtools mpileup -r $CHR_REGION -f $GENOME_FASTA $f.bam | awk '\$4 != 0' | java -jar $VARSCAN_JAR pileup2snp - $VARSCAN_PARAMETER > $f.snp.txt"
     cd ..
 done
 

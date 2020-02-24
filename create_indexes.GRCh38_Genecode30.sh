@@ -21,7 +21,7 @@ fi
 # Set the right paths to all executables.
 # $QuickIsoSeq/tools_path.sh was generated when you run install-tools.sh
 #
-source $QuickIsoSeq/tools_path.txt
+source $QuickIsoSeq/Tools/tools_path.txt
 
 #
 # It is recommended to name index_root as refGenone_Annotation

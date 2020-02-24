@@ -74,6 +74,7 @@ height=$(expr $width - 1)
 # 
 # Part A: Merging mapping, counting, and SNP
 #
+echo ""
 echo "Part A: Merge mapping, counting, and SNP"
 
 get-star-summary.pl $FLIST  star-mapping-summary.txt
@@ -129,18 +130,22 @@ fi
 Rscript $QuickIsoSeq/get-fc-gene.R $FLIST $GENE_ANNOTATION
 
 if [[ $ISOFORM_ALGORITHM = "ALL" || $ISOFORM_ALGORITHM = "KALLISTO" ]]; then
+	echo "Merging counts table from KALLISTO"
 	Rscript $QuickIsoSeq/get-kallisto-tpm.R $FLIST $TRANSCRIPT_ANNOTATION
 fi
 
 if [[ $ISOFORM_ALGORITHM = "ALL" || $ISOFORM_ALGORITHM = "RSEM" ]]; then
+	echo "Merging counts table from RSEM"
 	Rscript $QuickIsoSeq/get-rsem-tpm.R $FLIST $TRANSCRIPT_ANNOTATION
 fi
 
 if [[ $ISOFORM_ALGORITHM = "ALL" || $ISOFORM_ALGORITHM = "SALMON_ALN" ]]; then
+	echo "Merging counts table from SALMON_ALN"
 	Rscript $QuickIsoSeq/get-salmon_aln-tpm.R $FLIST $TRANSCRIPT_ANNOTATION
 fi
 
-if [[ $ISOFORM_ALGORITHM = "ALL" || $ISOFORM_ALGORITHM = "SALMON_ALN" ]]; then
+if [[ $ISOFORM_ALGORITHM = "ALL" || $ISOFORM_ALGORITHM = "SALMON" ]]; then
+	echo "$Merging counts table from SALMON"
 	Rscript $QuickIsoSeq/get-salmon-tpm.R $FLIST $TRANSCRIPT_ANNOTATION
 fi
 
@@ -149,7 +154,7 @@ fi
 # Part C: correlation-based QC
 #
 echo ""
-echo "Part C: correlation-based QC"
+echo "Part C: correlation-based sample QC"
 
 #
 # only 1 algorithm is selected in the order
@@ -177,7 +182,7 @@ Rscript $QuickIsoSeq/plot-expr-qc.R  $TX_TPM_FILE expr-gene  ${width}x${height}
 # Part D: merge QC metrics
 #
 echo ""
-echo "Part D: merge QC metrics"
+echo "Part D: merge QC metrics and move results to the output folder"
 
 FILES="star-mapping-summary.txt fc-counting-summary.txt expr-gene-MADScore.txt expr-gene-top10x.txt"
 if [[ $SAMPLE_SPECIES = "human" ]]; then
@@ -191,24 +196,21 @@ else
 fi
 
 
-#
-# Part E: Move results to the output folder
-#
 RESULT_FOLDER=Results
 if [[ $# -eq 3 ]]; then
     RESULT_FOLDER=$3
 fi
 SUMMARY_FOLDER=$RESULT_FOLDER/Summary
+rm -rf $RESULT_FOLDER
 
-echo ""
-echo "Part E: Move results to $SUMMARY_FOLDER"
+echo "The summary results are under $SUMMARY_FOLDER"
 
 
 mkdir -p $RESULT_FOLDER
 mkdir -p $SUMMARY_FOLDER
 
 if [ -n "$SAMPLE_ANNOTATION" ]; then
-	cp "$SAMPLE_ANNOTATION" $SUMMARY_FOLDER/sample.annotation.txt
+	mv "$SAMPLE_ANNOTATION" $SUMMARY_FOLDER/sample.annotation.txt
 fi
 
 cp $CONFIG $SUMMARY_FOLDER
@@ -225,4 +227,22 @@ mv *rpkm.txt $SUMMARY_FOLDER
 
 mv expr-count* $SUMMARY_FOLDER
 mv expr-gene*  $SUMMARY_FOLDER
+
+
+#
+# Part E: multiqc
+#
+
+command_exists () {
+    type "$1" &> /dev/null ;
+}
+if command_exists multiqc; then
+    echo ""
+	echo "Part E: run multiqc and the multiqc report multiqc_report.html is under $RESULT_FOLDER"
+	multiqc -f -m star -m featureCounts -m bowtie1 -m fastqc .
+	mv multiqc_report.html $RESULT_FOLDER
+	mv multiqc_data $RESULT_FOLDER
+else
+	echo "multiqc (a python-based package) is recommeded but not installed"
+fi
 

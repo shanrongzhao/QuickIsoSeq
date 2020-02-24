@@ -136,6 +136,16 @@ wget http://ccb.jhu.edu/software/stringtie/dl/gffread-0.11.4.Linux_x86_64.tar.gz
 tar -xzvf gffread-0.11.4.Linux_x86_64.tar.gz
 rm -f gffread-0.11.4.Linux_x86_64.tar.gz
 
+#
+# https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
+#
+# fastgc
+# 
+wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.9.zip
+unzip fastqc_v0.11.9.zip
+rm  fastqc_v0.11.9.zip
+chmod +x FastQC/fastgc
+
 
 #
 # Add the following output to run.config
@@ -156,15 +166,15 @@ SALMON=\$APPLICATION_ROOT/${SALMON_PKG}/bin
 KALLISTO=\$APPLICATION_ROOT/kallisto
 GFFREAD=\$APPLICATION_ROOT/gffread-0.11.4.Linux_x86_64
 BOWTIE=\$APPLICATION_ROOT/bowtie-$BOWTIE_VERSION-linux-x86_64
-
-export PATH=\$SAMTOOLS:\$STAR:\$FEATURECOUNTS:\$RSEM:\$SALMON:\$KALLISTO:\$GFFREAD:\$BOWTIE:\$PATH
+FASTQC=\$APPLICATION_ROOT/FastQC
+export PATH=\$SAMTOOLS:\$STAR:\$FEATURECOUNTS:\$RSEM:\$SALMON:\$KALLISTO:\$GFFREAD:\$BOWTIE:\$FASTQC:\$PATH
 "
 
 #
 # Put exccutables and PATH to $QuickIsoSeq/tools_path.sh
 #
 echo "
-APPLICATION_ROOT=$APPLICATION_ROOT
+APPLICATION_ROOT=\$QuickIsoSeq/Tools
 
 STAR=\$APPLICATION_ROOT/STAR_$STAR_VERSION/bin/Linux_x86_64_static
 FEATURECOUNTS=\$APPLICATION_ROOT/${SUBREAD_VERSION}/bin
@@ -175,8 +185,18 @@ SALMON=\$APPLICATION_ROOT/${SALMON_PKG}/bin
 KALLISTO=\$APPLICATION_ROOT/kallisto
 GFFREAD=\$APPLICATION_ROOT/gffread-0.11.4.Linux_x86_64
 BOWTIE=\$APPLICATION_ROOT/bowtie-$BOWTIE_VERSION-linux-x86_64
+FASTQC=\$APPLICATION_ROOT/FastQC
 
-export PATH=\$SAMTOOLS:\$STAR:\$FEATURECOUNTS:\$RSEM:\$SALMON:\$KALLISTO:\$GFFREAD:\$BOWTIE:\$PATH
-" > $QuickIsoSeq/tools_path.txt
+export PATH=\$SAMTOOLS:\$STAR:\$FEATURECOUNTS:\$RSEM:\$SALMON:\$KALLISTO:\$GFFREAD:\$BOWTIE:\$FASTQC:\$PATH
+" > $QuickIsoSeq/Tools/tools_path.txt
 
-
+#
+# Check whether multiqc installed
+#
+command_exists () {
+    type "$1" &> /dev/null ;
+}
+if ! command_exists multiqc; then
+    echo "multiqc (a python-based package) is recommeded but not installed"
+	echo "Install MultiQC:  pip install multiqc"
+fi
