@@ -1,6 +1,6 @@
 ###########################################################
 #
-#   QuickIsoSeq pipeline for RNA-seq isoform quantification
+#  QuickIsoSeq pipeline for RNA-seq isoform quantification
 #
 ###########################################################
 	
